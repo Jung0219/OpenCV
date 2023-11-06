@@ -18,8 +18,20 @@ controlling brightness
     iii. blocksize % 2 has to be 1
 5. bitwise operations
     i. cv2.bitwise_and, cv2.bitwise_or, cv2.bitwise_xor, cv2.bitwise_not
+        a. bitwise_and
+            1. black eats white (because 0 and 1 is 0)
+        b. bitwise_or
+            2. white eats black (because 0 and 1 is 1)
+        c. bitwise_not
+            3. opposite of and
     ii. putting two images together
         a. because black is 0, you convert certain parts of an image to black and put them together.
+        b. because black is what gets overwhelmed, the part of the image that you want to change must be black
+    iii.masking
+        a. when mask is provided, the whatever operation(and, or, not) is performed only in the area where the value is not 0
+        b. so basically where the image is not black
+        c. when using a mask, you have to specify it by mask=mask
+
 """
 
 
@@ -28,6 +40,29 @@ import numpy as np
 import matplotlib.pyplot as plt
 import cv2
 
+lst = ["blackCircle.jpg", "whiteCircle.jpg", "bw.jpg", "wb.jpg"]
+#cv2.circle(new, (750, 500), 250, (255, 255, 255), -1)
+blackCircle = cv2.imread("blackCircle.jpg")
+whiteCircle = cv2.imread("whiteCircle.jpg")
+bw = cv2.imread("bw.jpg")
+wb = cv2.imread("wb.jpg")
+
+combined = cv2.bitwise_not(blackCircle, bw)
+
+
+plt.figure(figsize=[20,5])
+
+plt.subplot(131);plt.imshow(blackCircle)
+plt.subplot(132);plt.imshow(bw)
+plt.subplot(133);plt.imshow(combined)
+
+plt.waitforbuttonpress()
+plt.close('all')
+
+
+
+
+"""
 imgBGR = cv2.imread("image.jpg")
 img = cv2.cvtColor(imgBGR, cv2.COLOR_BGR2RGB)
 grayImg = cv2.cvtColor(img, cv2.COLOR_RGB2GRAY)
@@ -47,7 +82,7 @@ for i in range(5):
 plt.waitforbuttonpress()
 plt.close('all')
 
-
+"""
 
 
 
