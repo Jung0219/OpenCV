@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import cv2 as cv
 
 # read the image and convert it into black and white
-address = ("sample.jpg")
+address = ("sample3.jpg")
 
 
 def contour(address, color=(255, 255, 255), thickness=1):
@@ -21,8 +21,17 @@ def contour(address, color=(255, 255, 255), thickness=1):
     # draw the contour on a black background
     retval, background = cv.threshold(img, 255, 255, cv.THRESH_BINARY)
     result = cv.drawContours(background, contours, -1, color, thickness)
-    cv.imwrite("contours.jpg", result)
+    cv.imwrite("edge1.jpg", result)
 
+
+def edge(address):
+    img = cv.imread(address)
+    edges = cv.Canny(img, 100, 200)
+    cv.imwrite("edge.jpg", edges)
+
+
+contour(address)
+edge(address)
 
 # experimenting whether I can make a contour with adaptively thresholded image
 """
@@ -41,6 +50,16 @@ result = cv.drawContours(background, contours, -1, (0, 0, 0), 10)
 
 plt.figure(figsize=(10, 10))
 plt.imshow(result, cmap="gray")
+plt.waitforbuttonpress()
+plt.close("all")
+"""
+
+"""
+img = cv.imread(address)
+edges = cv.Canny(img, 100, 200)
+
+plt.figure(figsize=(10, 10))
+plt.imshow(edges, cmap="gray")
 plt.waitforbuttonpress()
 plt.close("all")
 """

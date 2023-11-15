@@ -18,6 +18,13 @@ reading and drawing contours
     a. after extracting contour points and hierarcy using the findContour function
     b. cv2.drawContours(img, contours, index of contours (hierarchy), color, thickness, etc)
         i. for the index, use -1 to include all contours, or to draw the 3rd one, put 2 (0-indexed)
+
+Steps for drawing contours:
+    1. read the image
+    2. turn the image into b/w
+    3. threshold the image
+    4. extract contour and hierarchy 
+    5. draw contour
 """
 
 import os
@@ -30,19 +37,18 @@ img = cv2.imread("sample.jpg")
 # convert image to gray
 sample = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 # threshold the gray image
-sample = cv2.blur(sample, (10, 10))
-retval, thresholded = cv2.threshold(sample, 100, 255, cv2.THRESH_BINARY)
+retval, thresholded = cv2.threshold(sample, 100, 255, cv2.THRESH_OTSU)
 # get contour list
-contours, _ = cv2.findContours(
+contours, hierarchy = cv2.findContours(
     thresholded, cv2.RETR_TREE, cv2.CHAIN_APPROX_NONE)
 # draw contour on images
-cv2.drawContours(sample, contours, -1, (255, 0, 255), 1)
-cv2.drawContours(img, contours, -1, (255, 0, 255), 1)
+cv2.drawContours(sample, contours, -1, (0, 0, 0), 1)
+cv2.drawContours(img, contours, -1, (0, 0, 0), 1)
 retval, result = cv2.threshold(sample, 254, 255, cv2.THRESH_BINARY)
 
 
 cv2.namedWindow("thresh", cv2.WINDOW_NORMAL)
-cv2.imshow("thresh", result)
+cv2.imshow("thresh", img)
 
 if cv2.waitKey(0):
     cv2.destroyAllWindows()
