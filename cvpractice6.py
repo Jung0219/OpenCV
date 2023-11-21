@@ -26,23 +26,60 @@ I'm going to learn canny and blur on my own
         ii. it moves over an image an does mathematical operations
         iii. there has to be a middle value, so usually odd
     b. mathematical operation on the kernel region, then replace the same coordinate with
-        the computed value        
+        the computed value with the neighboring pixels
+    c. image gradients
+        i. directional change in image intensity (areas that form a line with same intensity)
+        ii. also uses kernel
+        iii. change in x and change in y calculated
+            1. Gx = I(x + 1, y) - I(x - 1, y)
+            2. Gy = I(x, y + 1) - I(x, y - 1)
+        iv. from here, we get gradient magnitude and gradient orientation 
+        v. you basically draw a triangle
+            1. gradient magnitude : magnitude of change in intensity
+                a. gradient magnitude is sqrt(Gx ^ 2 + Gy ^ 2)
+            2. gradient orientation : the diretion of the change in intensity
+                a. arctan(Gy, Gx)
+            3. then convert to degrees (180 / pi)
+3. Sobel and Scharr kernels
+    a. two kernels, one for horizontal change and one for vertical change
+        i. horizontal (sobel and scharr)
+            [-1, 0, 1], [3, 0, -3],
+            [-2, 0, 2], [10, 0, -10],
+            [-1, 0, 1], [3, 0, -3]
+        ii. vertical:
+            [-1, -2, -1], [3, 10, 3],
+            [0, 0, 0],    [0, 0, 0]  
+            [1, 2, 1]     [-3, -10, -3]  
 
-3. blurring (aka smoothing)
+4. blurring (aka smoothing)
     a. thresholding and edge detection better when image smoothened (less noise and details)
-    a. we must apply a filter to the image
+    b. bigger the kernel, blurrier the image
+    c. cv.blur(image, kernel(x, y))
+    d. cv.gaussianBlur(image, kernel(x, y)) (weighted blurring)
+    e. cv.medianBlur(image, kernel(x, y)) (replace center pixel with median)
 """
 import cv2 as cv
 import numpy as np
 import matplotlib.pyplot as plt
 
-address = "sample.jpg"
-img = cv.imread(address)
+kernelSizes = [(111, 111), (311, 311), (411, 411)]
 
-yellow = np.uint8([[[255, 255, 0]]])
-hsvYellow = cv.cvtColor(yellow, cv.COLOR_RGB2HSV)
+image = cv.imread("sample.jpg")
+imageRGB = cv.cvtColor(image, cv.COLOR_BGR2RGB)
 
-lowerLimit = hsvYellow[0][0][0] - 10, 100, 100
-upperLimit = hsvYellow[0][0][0] + 10, 255, 255
+normalBlur = cv.blur(imageRGB, (111, 111))
+gaussianBlur = cv.GaussianBlur(imageRGB, (111, 111), 0)
+medianBlur = cv.medianBlur(imageRGB, 211)
+bilateralBlur = cv.bilateralFilter(imageRGB, 111, 211, 71)
 
-print(lowerLimit, upperLimit)
+plt.figure(figsize=(15, 15))
+plt.subplot(141)
+plt.imshow(normalBlur)
+plt.subplot(142)
+plt.imshow(gaussianBlur)
+plt.subplot(143)
+plt.imshow(medianBlur)
+plt.subplot(144)
+plt.imshow(bilateralBlur)
+plt.waitforbuttonpress()
+plt.close("all")
