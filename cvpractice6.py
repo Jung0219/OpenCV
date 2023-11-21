@@ -57,6 +57,31 @@ I'm going to learn canny and blur on my own
     c. cv.blur(image, kernel(x, y))
     d. cv.gaussianBlur(image, kernel(x, y)) (weighted blurring)
     e. cv.medianBlur(image, kernel(x, y)) (replace center pixel with median)
+    f. cv.bilateralFilter(image, )
+
+5. image edges
+    a. step edge
+        i. abrupt change in pixel intensity
+    b. ramp edge
+        i. gradual change 
+    c. ridge edge
+        i. two ramp edges combined, up and down
+        ii. roof edge: descend right away after reaching the highest point
+
+6. canny edge detection
+    a. gaussian smoothing
+    b. gradient magnitude and orientation calculation
+    c. non maxima suppression (selecting one highest-pixel value for the edge)
+        i. based on gradient orientation (compare with other pixel values along the orientation)
+    d. hysteresis thresholding
+        i. T upper and lower, where lower and upper values are considered edge and non-edge values
+        ii. if the region is connected through the upper value, see it as an edge
+    e. cv.Canny(img, lowerThreshold, upperThreshold)     
+
+
+Last left off with canny edge detection
+Goal for next week: finish up with the contour detection program
+make it into a solid github project
 """
 import cv2 as cv
 import numpy as np
@@ -65,21 +90,26 @@ import matplotlib.pyplot as plt
 kernelSizes = [(111, 111), (311, 311), (411, 411)]
 
 image = cv.imread("sample.jpg")
+imageGray = cv.cvtColor(image, cv.COLOR_BGR2GRAY)
+
 imageRGB = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+cannied = cv.Canny(imageRGB, 30, 150)
 
-normalBlur = cv.blur(imageRGB, (111, 111))
-gaussianBlur = cv.GaussianBlur(imageRGB, (111, 111), 0)
-medianBlur = cv.medianBlur(imageRGB, 211)
-bilateralBlur = cv.bilateralFilter(imageRGB, 111, 211, 71)
+blurred = cv.GaussianBlur(imageRGB, (11, 11), 0)
+blurredCanny = cv.Canny(blurred, 30, 150)
 
-plt.figure(figsize=(15, 15))
+upperThresh, _ = cv.threshold(imageGray, 0, 255, cv.THRESH_OTSU)
+lowerThresh = upperThresh / 2
+
+canny3 = cv.Canny(blurred, lowerThresh, upperThresh)
+
+
+plt.figure(figsize=(20, 15))
 plt.subplot(141)
-plt.imshow(normalBlur)
+plt.imshow(cannied, cmap="gray")
 plt.subplot(142)
-plt.imshow(gaussianBlur)
+plt.imshow(blurredCanny, cmap="gray")
 plt.subplot(143)
-plt.imshow(medianBlur)
-plt.subplot(144)
-plt.imshow(bilateralBlur)
+plt.imshow(canny3, cmap="gray")
 plt.waitforbuttonpress()
 plt.close("all")
